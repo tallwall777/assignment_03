@@ -21,34 +21,41 @@ Test it: pytest tests/test_streamlit.py -k process_file
 # `one_package.py` is your worked example for anything structural, and README
 # Reference #4 and #5 cover the two things that are new here.
 
-# TODO: imports — streamlit, json, and what you need from packaging_parser.
+import streamlit as st
+import json
+from packaging_parser import calc_total_units, get_unit, parse_packaging
+
+st.title("Process a File of Packages")
+
+package_file = st.file_uploader("Upload a packaging file", key="package_file")
 
 
-# TODO: the title, exactly:   Process File of Packages
+
+if package_file:
+
+    text = package_file.read().decode()
+    lines = text.splitlines()
+
+    packages = []
 
 
-# TODO: a file uploader, key="package_file". Like the text box in Part 1 it returns
-#       a value — None until a file has been chosen — so the same kind of guard
-#       goes around everything below.
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue 
+
+        package = parse_packaging(stripped)
+        total = calc_total_units(package)
+        unit = get_unit(package)
+
+        packages.append(package)
+
+        st.info(f"{stripped} ➡️ Total 📦 Size: {total} {unit}")
+
+    out_name = package_file.name.replace(".txt", ".json")
+    out_path = f"data/{out_name}"
+    with open(out_path, "w") as f:
+        json.dump(packages,f)
 
 
-# 1. Bytes to text. The upload is bytes; decode it, then split it into lines.
-# TODO
-
-
-# 2. Every line: strip it, SKIP IT IF IT IS BLANK, parse it, keep the parsed package
-#    in a list, and show the line with its total. Match this layout:
-#
-#        12 eggs in 1 carton / 3 cartons in 1 box ➡️ Total 📦 Size: 36 eggs
-# TODO
-
-
-# 3. Write the list of parsed packages to data/<name>.json with json.dump, where
-#    <name> is the uploaded file's name with .txt replaced by .json.
-# TODO
-
-
-# 4. Say what happened, exactly:
-#
-#        3 packages written to data/packaging1.json
-# TODO
+st.success(f"{len(packages)} packages written to {out_path}")
