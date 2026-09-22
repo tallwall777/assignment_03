@@ -21,41 +21,38 @@ Test it: pytest tests/test_streamlit.py -k process_file
 # `one_package.py` is your worked example for anything structural, and README
 # Reference #4 and #5 cover the two things that are new here.
 
-import streamlit as st
 import json
+
+import streamlit as st
+
 from packaging_parser import calc_total_units, get_unit, parse_packaging
 
-st.title("Process a File of Packages")
+st.title("Process File of Packages")
 
 package_file = st.file_uploader("Upload a packaging file", key="package_file")
 
-
+packages = []
+out_path = ""
 
 if package_file:
-
-    text = package_file.read().decode()
+    text = package_file.read().decode("utf-8")
     lines = text.splitlines()
-
-    packages = []
-
 
     for line in lines:
         stripped = line.strip()
         if not stripped:
-            continue 
+            continue
 
         package = parse_packaging(stripped)
         total = calc_total_units(package)
         unit = get_unit(package)
 
         packages.append(package)
-
         st.info(f"{stripped} ➡️ Total 📦 Size: {total} {unit}")
 
     out_name = package_file.name.replace(".txt", ".json")
     out_path = f"data/{out_name}"
-    with open(out_path, "w") as f:
-        json.dump(packages,f)
+    with open(out_path, "w", encoding="utf-8") as file_handle:
+        json.dump(packages, file_handle)
 
-
-st.success(f"{len(packages)} packages written to {out_path}")
+    st.success(f"{len(packages)} packages written to {out_path}")

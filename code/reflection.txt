@@ -1,6 +1,1 @@
-Write your reflection here.
-
-See reflection.md for what makes a good reflection — be specific, use the
-terminology from this assignment (rerun, widget, return value, guard, bytes vs.
-text, decode, session state, initialise once, button-triggered, metric), and make
-it actionable.
+This assignment taught me how Streamlit's automatic rerun behavior affects every widget's return value, and why a guard is essential to prevent crashes when the uploader is still empty. Converting the upload from bytes to text and remembering to decode before splitting lines made the data flow much clearer. Processing each line and writing structured output reinforced how important it is to keep work initialised once instead of redoing it on every rerun. It also showed me when a button-triggered action or a stored session state value would prevent unnecessary repeated parsing.
